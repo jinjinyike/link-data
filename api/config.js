@@ -2,7 +2,7 @@ const path = require('path');
 const mysqlENV = process.env.mysql
     ? JSON.parse(process.env.mysql)
     : {
-        host: 'localhost',
+        host: '47.104.202.11',
         connectionLimit: '20'
     };
 /** mysql数据库配置 */
@@ -10,14 +10,14 @@ const mysql = {
     connectionLimit: mysqlENV.connectionLimit,
     host: mysqlENV.host,
     port: 3306,
-    user: 'lightbot_stat',
-    password: '2AGgvT6T!kZqefcL',
-    database: 'lightbot',
+    user: 'jinjin',
+    password: 'jinjin1221',
+    database: 'jinjinyike',
     charset: 'utf8mb4'
 };
 
 /** 日志根目录 */
-const LOGS_PATH = process.env.NODE_ENV === 'dev' ? path.resolve(__dirname + '/logs/') : "/tmp/logs/lightbot";
+const LOGS_PATH = process.env.NODE_ENV === 'dev' ? path.resolve(__dirname + '/logs/') : "/tmp/logs/link";
 
 /** 服务设置 */
 const SERVER = {

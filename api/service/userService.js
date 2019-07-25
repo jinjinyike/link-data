@@ -47,7 +47,7 @@ const ChatsService = function(app) {
             : "INSERT INTO user (name, mobile,createtime) VALUES (?,?,?)";
           _pool_connection_format($sql, params, rs => {
             let dto = new DTO();
-            if (rs.insertId > 0 || (id && rs.insertId == 0)) {
+            if (rs.insertId > 0 || (id && rs.changedRows > 0)) {
               response.json(
                 dto
                   .set(0, `${id ? "修改" : "添加"}成功`, {
@@ -93,6 +93,27 @@ const ChatsService = function(app) {
     });
   });
   /**
+   * 获取某个用户信息
+   */
+  app.get(`${BASE_PATH}/getUser/:id`, (request, response) => {
+    let id = parseInt(request.params.id || 0);
+    if (id == 0) {
+      response.json(DTO.PARAMS_ERR);
+      return;
+    }
+    let params = [id];
+    let $sql = "SELECT id, name, mobile FROM user WHERE id = ?";
+    _pool_connection_format($sql, params, res => {
+      if (res !== false) {
+        const dto = new DTO();
+        dto.set(res[0]);
+        response.json(dto.toJSON());
+      } else {
+        response.json(DTO.TIMEOUT_ERR);
+      }
+    });
+  });
+  /**
    * 注销用户
    */
   app.post(`${BASE_PATH}/del/:id`, (request, response) => {
@@ -116,7 +137,7 @@ const ChatsService = function(app) {
       response.json(DTO.TIMEOUT_ERR);
     }
   });
-  
+
   /**
    * 检验名称是否唯一
    */

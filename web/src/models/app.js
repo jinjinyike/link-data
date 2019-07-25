@@ -1,15 +1,22 @@
-import { addInfo } from '@/services/user';
+import { addInfo ,login,getInfo,getTotalDay} from '@/services/user';
 import { Toast } from 'antd-mobile';
+import router from 'umi/router';
 export default {
   namespace: 'app',
   state: {
     collapsed: false,
     notices: [],
+    user:JSON.parse(localStorage.getItem('user'))||{},
+    info:{day_add:2},
+    infoTotal:{list:[]}
   },
   subscriptions: {
-    setup({ history }) {
+    setup({ history ,dispatch}) {
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
       history.listen(({ pathname, search }) => {
+        if(pathname==='/home/selfInfo'){
+          dispatch({type:'getInfo'})
+        }
         // if (typeof window.ga !== 'undefined') {
         //   window.ga('send', 'pageview', pathname + search);
         // }
@@ -21,10 +28,28 @@ export default {
       console.log(payload);
       const data = yield call(addInfo, payload);
       if (data.code === 0) {
-        Toast.success('添加成功', 1);
+        Toast.success(payload.id?'修改成功':'添加成功');
+        router.push('/home/selfInfo');
       }
     },
-
+    *login({payload},{call,put}){
+      const data=yield call(login,payload);
+      if(data.code==0){
+        localStorage.setItem('user',JSON.stringify(data.data))
+        router.push('/home');
+      }
+    },
+    *getInfo({payload},{call,put,select}){
+      const id = yield select(state => state.app.user.id);
+      const data=yield call(getInfo,id);
+      if(data.code==0){
+        yield put({type:'save',payload:{info:data.data}})
+      }
+      const res=yield call(getTotalDay);
+      if(res.code==0){
+        yield put({type:'save',payload:{infoTotal:res.data}})
+      }
+    }
     // *clearNotices({ payload }, { put, select }) {
     //   yield put({
     //     type: 'saveClearedNotices',

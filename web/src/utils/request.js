@@ -1,6 +1,7 @@
 import axios from 'axios'
 import cloneDeep from 'lodash.clonedeep'
 // import router from 'umi/router';
+import { Toast } from 'antd-mobile';
 
 const prifix = '/api';
 
@@ -43,7 +44,8 @@ export default function request(options) {
                 return;
             }
             if (data.code !== 0) {
-                return Promise.reject({success: false, statusCode: status, message: data.desc})
+                Toast.info(data.msg)
+                return Promise.reject({success: false, statusCode: status, message: data.msg,...data})
             } else {
                 return Promise.resolve({
                     success: true,
@@ -67,7 +69,7 @@ export default function request(options) {
         if (response && response instanceof Object) {
             const {data, statusText} = response
             statusCode = response.status
-            msg = data.message || statusText
+            msg = data.msg || statusText
         } else {
             statusCode = 600
             msg = error.message || 'Network Error'

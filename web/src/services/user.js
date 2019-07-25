@@ -21,7 +21,10 @@ export const getTotalDay = () => request({
   url: `/day/totalDay`,
   method: 'get'
 })
-
+export const getTotalList = () => request({
+  url: `/day/list`,
+  method: 'get'
+})
 export const login = (obj) => request({
   url: '/login',
   method: 'post',

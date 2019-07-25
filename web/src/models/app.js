@@ -1,22 +1,21 @@
-import { addInfo ,login,getInfo,getTotalDay} from '@/services/user';
+import { addInfo ,login,getInfo,getTotalDay,getTotalList} from '@/services/user';
 import { Toast } from 'antd-mobile';
 import router from 'umi/router';
 export default {
   namespace: 'app',
   state: {
-    collapsed: false,
-    notices: [],
     user:JSON.parse(localStorage.getItem('user'))||{},
-    info:{day_add:2},
-    infoTotal:{list:[]}
+    info:{},
+    infoTotal:{list:[]},
+    list:[]
   },
   subscriptions: {
     setup({ history ,dispatch}) {
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
       history.listen(({ pathname, search }) => {
-        if(pathname==='/home/selfInfo'){
-          dispatch({type:'getInfo'})
-        }
+        // if(pathname==='/home/selfInfo'){
+        //   dispatch({type:'getInfo'})
+        // }
         // if (typeof window.ga !== 'undefined') {
         //   window.ga('send', 'pageview', pathname + search);
         // }
@@ -29,7 +28,7 @@ export default {
       const data = yield call(addInfo, payload);
       if (data.code === 0) {
         Toast.success(payload.id?'修改成功':'添加成功');
-        router.push('/home/selfInfo');
+        router.push('/home');
       }
     },
     *login({payload},{call,put}){
@@ -40,34 +39,23 @@ export default {
       }
     },
     *getInfo({payload},{call,put,select}){
-      const id = yield select(state => state.app.user.id);
-      const data=yield call(getInfo,id);
-      if(data.code==0){
-        yield put({type:'save',payload:{info:data.data}})
+      const user = yield select(state => state.app.user);
+      if(user.admin){
+        const res=yield call(getTotalDay);
+        if(res.code==0){
+          yield put({type:'save',payload:{infoTotal:res.data}})
+        }
+      }else{
+        const data=yield call(getInfo,user.id);
+        if(data.code==0){
+          yield put({type:'save',payload:{info:data.data}})
+        }
       }
-      const res=yield call(getTotalDay);
-      if(res.code==0){
-        yield put({type:'save',payload:{infoTotal:res.data}})
+      const rs=yield call(getTotalList);
+      if(rs.code==0){
+        yield put({type:'save',payload:{list:rs.data}})
       }
     }
-    // *clearNotices({ payload }, { put, select }) {
-    //   yield put({
-    //     type: 'saveClearedNotices',
-    //     payload,
-    //   });
-    //   const count = yield select(state => state.global.notices.length);
-    //   const unreadCount = yield select(
-    //     state => state.global.notices.filter(item => !item.read).length,
-    //   );
-    //   yield put({
-    //     type: 'user/changeNotifyCount',
-    //     payload: {
-    //       totalCount: count,
-    //       unreadCount,
-    //     },
-    //   });
-    // },
-
     // *changeNoticeReadState({ payload }, { put, select }) {
     //   const notices = yield select(state =>
     //     state.global.notices.map(item => {

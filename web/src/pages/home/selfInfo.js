@@ -73,8 +73,8 @@ class Main extends React.Component {
     );
   };
   render() {
-    const { info, user, infoTotal } = this.props.app;
-    const list=user.admin?infoTotal.list:infoTotal.list.filter(ele=>ele.user_id!=user.id)
+    const { info, user, infoTotal,list:arr } = this.props.app;
+    const list=user.admin?arr:arr.filter(ele=>ele.user_id!=user.id)
     console.log(user)
     return (
       <div>
@@ -90,26 +90,26 @@ class Main extends React.Component {
                 <div className={styles.row} key={11}>
                   <Flex justify="between">
                     <span>
-                      累积新增：<i>{infoTotal.total_days_add}</i>
+                      累积新增：<i>{infoTotal.total_days_add||0}</i>
                     </span>
                     <span>
-                      累积带看：<i>{infoTotal.total_days_look}</i>
-                    </span>
-                  </Flex>
-                  <Flex justify="between">
-                    <span>
-                      累积单量：<i>{infoTotal.total_days_order}</i>
-                    </span>
-                    <span>
-                      累积业绩：<i>{infoTotal.total_days_achievement}</i>
+                      累积带看：<i>{infoTotal.total_days_look||0}</i>
                     </span>
                   </Flex>
                   <Flex justify="between">
                     <span>
-                      累积客户咨询量：<i>{infoTotal.total_days_im_consult}</i>
+                      累积单量：<i>{infoTotal.total_days_order||0}</i>
                     </span>
                     <span>
-                      累积加私量：<i>{infoTotal.total_days_im_private}</i>
+                      累积业绩：<i>{infoTotal.total_days_achievement||0}</i>
+                    </span>
+                  </Flex>
+                  <Flex justify="between">
+                    <span>
+                      累积客户咨询量：<i>{infoTotal.total_days_im_consult||0}</i>
+                    </span>
+                    <span>
+                      累积加私量：<i>{infoTotal.total_days_im_private||0}</i>
                     </span>
                   </Flex>
                 </div>

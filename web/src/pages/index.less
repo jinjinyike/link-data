@@ -1,0 +1,34 @@
+
+.normal {
+  font-family: Georgia, sans-serif;
+  height: 100vh;
+  background: linear-gradient(to bottom,#50a3a2 0%,#53e3a6 100%);
+  opacity: .8;
+  :global{
+    .am-list-body{
+      background: rgba(255,255,255,.3);
+      border: 1px solid rgba(255,255,255,.4);
+      color: #fff
+    }
+    .am-list-item{
+      background: transparent;
+    }
+    .am-list-item .am-input-label,.am-list-item input{
+      color: #fff;
+    }
+    input::placeholder{
+      color: #fff;
+    }
+  }
+}
+
+.subBtn{
+  width: 100%;
+  margin-top: 8rem;
+  :global{
+    .am-button{
+      color: #53e3a6;
+      // border-radius: 47px;
+    }
+  }
+}

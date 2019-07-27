@@ -1,0 +1,21 @@
+{
+  "apps" : [{
+    "name"        : "link-api",
+    "script"      : "./apiServer.js",
+    "watch"       : true,
+    "env": {
+      "mysql": {
+        "host": "47.104.202.11",
+        "connectionLimit": 20
+      },
+      "NODE_ENV": "dev"
+    },
+    "env_pro": {
+      "mysql": {
+        "host": "47.104.202.11",
+        "connectionLimit": 20
+      },
+      "NODE_ENV": "pro"
+    }
+  }]
+}

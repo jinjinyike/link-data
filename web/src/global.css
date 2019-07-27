@@ -1,0 +1,13 @@
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+/* :global{ */
+  .am-button{
+    border-radius: 47px;
+  }
+/* } */

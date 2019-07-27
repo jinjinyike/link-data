@@ -1,8 +1,8 @@
 import React from 'react';
-import { List, InputItem, Button, NavBar, Icon, Toast } from 'antd-mobile';
+import { List, InputItem, Button, NavBar, Icon, Toast ,WhiteSpace} from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';
-import router from 'umi/router'
+import router from 'umi/router';
 const styles = require('./index.less');
 
 class H5NumberInputExample extends React.Component {
@@ -39,15 +39,10 @@ class H5NumberInputExample extends React.Component {
     this.props.dispatch({ type: 'user/editUser', payload: obj });
   };
   render() {
-    const { info } = this.props.user;
     const { id } = this.state;
     return (
       <div>
-        <NavBar
-          mode="dark"
-          icon={<Icon type="left" />}
-          onLeftClick={() => router.push('/home')}
-        >
+        <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={() => router.push('/home')}>
           人员信息
         </NavBar>
         <List className={styles.list}>
@@ -78,6 +73,5 @@ class H5NumberInputExample extends React.Component {
     );
   }
 }
-// export default createForm()(H5NumberInputExample);
 const Index = createForm()(H5NumberInputExample);
 export default connect(({ user }) => ({ user }))(Index);

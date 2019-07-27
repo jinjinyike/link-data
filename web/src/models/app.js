@@ -11,20 +11,15 @@ export default {
   },
   subscriptions: {
     setup({ history ,dispatch}) {
-      // Subscribe history(url) change, trigger `load` action if pathname is `/`
       history.listen(({ pathname, search }) => {
-        // if(pathname==='/home/selfInfo'){
-        //   dispatch({type:'getInfo'})
-        // }
-        // if (typeof window.ga !== 'undefined') {
-        //   window.ga('send', 'pageview', pathname + search);
-        // }
+        if(pathname==='/home'){
+          dispatch({type:'save',payload:{user:JSON.parse(localStorage.getItem('user'))||{}}})
+        }
       });
     },
   },
   effects: {
     *fetchAdd({ payload }, { call, put, select }) {
-      console.log(payload);
       const data = yield call(addInfo, payload);
       if (data.code === 0) {
         Toast.success(payload.id?'修改成功':'添加成功');
@@ -35,6 +30,7 @@ export default {
       const data=yield call(login,payload);
       if(data.code==0){
         localStorage.setItem('user',JSON.stringify(data.data))
+        yield put({type:'save',payload:{user:data.data}})
         router.push('/home');
       }
     },
@@ -42,17 +38,17 @@ export default {
       const user = yield select(state => state.app.user);
       if(user.admin){
         const res=yield call(getTotalDay);
-        if(res.code==0){
+        if(res.code===0){
           yield put({type:'save',payload:{infoTotal:res.data}})
         }
       }else{
         const data=yield call(getInfo,user.id);
-        if(data.code==0){
+        if(data.code===0){
           yield put({type:'save',payload:{info:data.data}})
         }
       }
       const rs=yield call(getTotalList);
-      if(rs.code==0){
+      if(rs.code===0){
         yield put({type:'save',payload:{list:rs.data}})
       }
     }

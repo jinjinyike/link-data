@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, InputItem, Button, NavBar, Icon } from 'antd-mobile';
+import { List, InputItem, Button, NavBar, Icon ,WhiteSpace} from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';
 import router from 'umi/router';
@@ -47,7 +47,6 @@ class H5NumberInputExample extends React.Component {
     const { getFieldProps } = this.props.form;
     const { type } = this.state;
     const { info } = this.props.app;
-    console.log(info);
     return (
       <div>
         <NavBar mode="dark" icon={<Icon type="left" />} onLeftClick={() => router.push('/home')}>
@@ -85,10 +84,10 @@ class H5NumberInputExample extends React.Component {
             {info.id ? '修改' : '添加'}
           </Button>
         </div>
+        <WhiteSpace size="lg" />
       </div>
     );
   }
 }
-// export default createForm()(H5NumberInputExample);
 const Index = createForm()(H5NumberInputExample);
 export default connect(({ app }) => ({ app }))(Index);

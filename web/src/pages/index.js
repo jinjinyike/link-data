@@ -1,8 +1,8 @@
 import React from 'react';
-import { List, InputItem, Button, NavBar, Icon, Toast } from 'antd-mobile';
+import { List, InputItem, Button, Toast, WingBlank } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { connect } from 'react-redux';
-const styles = require('./index.css');
+const styles = require('./index.less');
 
 class H5NumberInputExample extends React.Component {
   state = {
@@ -33,32 +33,32 @@ class H5NumberInputExample extends React.Component {
     if (hasError) {
       return Toast.info('请输入正确的手机号码');
     }
-    this.props.dispatch({ type: 'app/login', payload: { mobile: value.replace(/\s+/g,'') } });
+    this.props.dispatch({ type: 'app/login', payload: { mobile: value.replace(/\s+/g, '') } });
   };
   render() {
     return (
-      <div>
-        <List className={styles.list}>
-          <InputItem
-            type="phone"
-            placeholder="请输入手机号码"
-            error={this.state.hasError}
-            onErrorClick={this.onErrorClick}
-            onChange={this.onChange}
-            value={this.state.value}
-          >
-            手机号码
-          </InputItem>
-        </List>
-        <div className={styles.subBtn}>
-          <Button type="primary" onClick={this.handleSubmit}>
-            登陆
-          </Button>
-        </div>
+      <div className={styles.normal}>
+        <WingBlank size="lg">
+          <div style={{ height: '13rem' }} />
+          <List className={styles.list}>
+            <InputItem
+              type="phone"
+              placeholder="请输入手机号码"
+              error={this.state.hasError}
+              onErrorClick={this.onErrorClick}
+              onChange={this.onChange}
+              value={this.state.value}
+            >
+              手机号码
+            </InputItem>
+          </List>
+          <div className={styles.subBtn}>
+            <Button onClick={this.handleSubmit}>登陆</Button>
+          </div>
+        </WingBlank>
       </div>
     );
   }
 }
-// export default createForm()(H5NumberInputExample);
 const Index = createForm()(H5NumberInputExample);
 export default connect(({ app }) => ({ app }))(Index);

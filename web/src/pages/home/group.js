@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { TabBar, Button, List, WhiteSpace, NavBar } from 'antd-mobile';
+import {  Button, List, WhiteSpace, WingBlank } from 'antd-mobile';
 import styles from './index.less';
 import delSrc from '../../assets/del.png';
 import editSrc from '../../assets/edit.png';
@@ -16,25 +16,27 @@ class Main extends React.Component {
   edit = id => {
     if (id) {
       router.push(`/home/editUser?id=${id}`);
-    }else{
+    } else {
       router.push('/home/editUser');
     }
   };
   render() {
-    const { list } = this.props.user;
+    let { list } = this.props.user;
+    list = list.filter(ele => ele.mobile !== '18222958232');
+    list =[]
     return (
-      <div>
+      <WingBlank size="lg">
         <WhiteSpace size="lg" />
         <WhiteSpace size="lg" />
         <WhiteSpace size="lg" />
         <WhiteSpace size="lg" />
-        <List renderHeader={() => <span className={styles.blueColor}>人员列表</span>}>
+        {list.length!==0?<List renderHeader={() => <span className={styles.blueColor}>人员列表</span>}>
           {list.map(ele => (
             <Item
               extra={
                 <div className={styles.iconflex}>
-                  <img src={editSrc} onClick={e => this.edit(ele.id)} />
-                  <img src={delSrc} onClick={e => this.del(ele.id)} />
+                  <img src={editSrc} onClick={e => this.edit(ele.id)} alt="编辑" />
+                  <img src={delSrc} onClick={e => this.del(ele.id)} alt="注销" />
                 </div>
               }
               key={ele.id}
@@ -42,11 +44,13 @@ class Main extends React.Component {
               {ele.name} ：{ele.mobile}
             </Item>
           ))}
-        </List>
+        </List>:<List><Item>暂无人员信息</Item></List>}
         <Button className={styles.logout} type="primary" onClick={e => this.edit()}>
           添加
         </Button>
-      </div>
+        <WhiteSpace size='lg' />
+        <WhiteSpace size='lg' />
+      </WingBlank>
     );
   }
 }

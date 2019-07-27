@@ -1,17 +1,17 @@
 import React from 'react';
-import { List, Button, Card, WingBlank, WhiteSpace, Flex } from 'antd-mobile';
+import { Card, WingBlank, WhiteSpace, Flex } from 'antd-mobile';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import styles from './index.less';
 import editSrc from '../../assets/edit.png';
-import router from 'umi/router'
+import router from 'umi/router';
 class Main extends React.Component {
   componentWillMount() {
     this.props.dispatch({ type: 'app/getInfo' });
   }
-   edit=()=>{
-    router.push('/home/editInfo')
-  }
+  edit = () => {
+    router.push('/home/editInfo');
+  };
   renderItem = info => {
     return (
       <div className={styles.row} key={info.id}>
@@ -52,7 +52,7 @@ class Main extends React.Component {
             今日加私带看量：<i>{info.im_privatelook || 0}</i>
           </span>
         </Flex>
-        <div className={styles.sub_title || 0}>本月累积</div>
+        <div className={styles.sub_title || 0}>本月</div>
         <Flex justify="between">
           <span>
             累积新增：<i>{info.total_add || 0}</i>
@@ -69,47 +69,51 @@ class Main extends React.Component {
             累积业绩：<i>{info.total_achievement || 0}</i>
           </span>
         </Flex>
+        <Flex justify="between">
+          <span>
+            业绩目标：<i>{info.target || 0}</i>
+          </span>
+          <span>
+            业绩达成：<i>{info.targer_percent || 0}</i>
+          </span>
+        </Flex>
       </div>
     );
   };
   render() {
-    const { info, user, infoTotal,list:arr } = this.props.app;
-    const list=user.admin?arr:arr.filter(ele=>ele.user_id!=user.id)
-    console.log(user)
+    const { info, user, infoTotal, list: arr } = this.props.app;
+    const list = user.admin ? arr : arr.filter(ele => ele.user_id !== user.id);
     return (
       <div>
         <WingBlank size="lg">
           <WhiteSpace size="lg" />
           {user.admin ? (
             <Card className={styles.cardSelf} key={1}>
-              <Card.Header
-                title='今日累积'
-                extra={<span>{moment().format('YYYY-MM-DD')}</span>}
-              />
+              <Card.Header title="今日累积" extra={<span>{moment().format('YYYY-MM-DD')}</span>} />
               <Card.Body>
                 <div className={styles.row} key={11}>
                   <Flex justify="between">
                     <span>
-                      累积新增：<i>{infoTotal.total_days_add||0}</i>
+                      累积新增：<i>{infoTotal.total_days_add || 0}</i>
                     </span>
                     <span>
-                      累积带看：<i>{infoTotal.total_days_look||0}</i>
-                    </span>
-                  </Flex>
-                  <Flex justify="between">
-                    <span>
-                      累积单量：<i>{infoTotal.total_days_order||0}</i>
-                    </span>
-                    <span>
-                      累积业绩：<i>{infoTotal.total_days_achievement||0}</i>
+                      累积带看：<i>{infoTotal.total_days_look || 0}</i>
                     </span>
                   </Flex>
                   <Flex justify="between">
                     <span>
-                      累积客户咨询量：<i>{infoTotal.total_days_im_consult||0}</i>
+                      累积单量：<i>{infoTotal.total_days_order || 0}</i>
                     </span>
                     <span>
-                      累积加私量：<i>{infoTotal.total_days_im_private||0}</i>
+                      累积业绩：<i>{infoTotal.total_days_achievement || 0}</i>
+                    </span>
+                  </Flex>
+                  <Flex justify="between">
+                    <span>
+                      累积客户咨询量：<i>{infoTotal.total_days_im_consult || 0}</i>
+                    </span>
+                    <span>
+                      累积加私量：<i>{infoTotal.total_days_im_private || 0}</i>
                     </span>
                   </Flex>
                 </div>
@@ -117,13 +121,32 @@ class Main extends React.Component {
             </Card>
           ) : (
             <Card className={styles.cardSelf} key={2}>
-              <Card.Header title={user.name} extra={<div ><span>{info.createtime||moment().format('YYYY-MM-DD')}</span></div>} />
+              <Card.Header
+                title={user.name}
+                extra={
+                  <div>
+                    <span>{info.createtime || moment().format('YYYY-MM-DD')}</span>
+                  </div>
+                }
+              />
               <Card.Body>{this.renderItem(info)}</Card.Body>
-              <Card.Footer content="footer content" extra={<div><img src={editSrc} style={{width:'2rem'}} onClick={e=>this.edit(info.id)} /></div>} />
+              <Card.Footer
+                content=" "
+                extra={
+                  <div>
+                    <img
+                      alt='编辑'
+                      src={editSrc}
+                      style={{ width: '2rem' }}
+                      onClick={e => this.edit(info.id)}
+                    />
+                  </div>
+                }
+              />
             </Card>
           )}
           <WhiteSpace size="lg" />
-          {list.length!==0 &&
+          {list.length !== 0 &&
             list.map(ele => (
               <div>
                 <Card className={styles.cardSelf} key={3}>

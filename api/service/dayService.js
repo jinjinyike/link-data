@@ -118,7 +118,7 @@ const DataService = function (app) {
             ...obj,
             ...days
           };
-          obj.createtime = moment(obj.createtime).format("YYYY-MM-DD HH:mm:ss");
+          obj.createtime = obj.createtime?moment(obj.createtime).format("YYYY-MM-DD HH:mm:ss"):'';
           obj.updatetime = obj.updatetime ?
             moment(obj.updatetime).format("YYYY-MM-DD HH:mm:ss") :
             null;
@@ -163,17 +163,11 @@ const DataService = function (app) {
               moment(ele.updatetime).format("YYYY-MM-DD HH:mm:ss") :
               null;
           });
-          /** 总本月目标 */
-          const totalTarget = getTotalTarget();
-          ele.target =
-            totalTarget.some(item => ele.user_id == item.user_id).target || 0;
-          obj.list = res;
           dto.set(obj);
           response.json(dto.toJSON());
         } else {
           let dto = new DTO();
           response.json(dto.toJSON(dto.set(0, "", obj)));
-          // response.json(DTO.TIMEOUT_ERR);
         }
       });
     } catch (e) {
@@ -198,29 +192,36 @@ const DataService = function (app) {
    * 获取今日人员数据列表
    */
   app.get(`/api/day/list`, (request, response) => {
-     getTodayList({}, response).then(todayList=>{
-      // const todayList = todayList;
-      console.log(todayList)
-    let dto = new DTO;
+     getTodayList({}, response).then(rs=>{
+       let todayList=rs;
+        let dto = new DTO;
     if (todayList.length) {
-      const monthList = getMonthList({}, response);
-      todayList.forEach(ele => {
-        ele={...ele,...getTotalFild(monthList,ele.user_id)};
-        ele.target= getOneTarget(getTotalTarget(),user_id);
-        if (ele.target == 0 || ele.total_achievement == 0) {
-          ele.target_percent = 0;
-        } else {
-          ele.target_percent = (
-            (ele.total_achievement / ele.target) *
-            10000
-          ).toFixed(2);
-        }
-        ele.name=getOneName(getUserList(),ele.user_id)
-        ele.createtime = moment(ele.createtime).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
+      let promises=[getMonthList({}, response),getTotalTarget({},response),getUserList({},response)];
+      Promise.all(promises).then(res=>{
+        const monthList = res[0];
+        const totalTarget=res[1];
+        const userList=res[2];
+        todayList.forEach(ele => {
+          ele=Object.assign(ele,getTotalFild(monthList,ele.user_id));
+          ele.target= getOneTarget(totalTarget,ele.user_id);
+          if (ele.target == 0 || ele.total_achievement == 0) {
+            ele.target_percent = 0;
+          } else {
+            ele.target_percent = (
+              (ele.total_achievement / ele.target) *
+              10000
+            ).toFixed(2);
+          }
+          ele.name=getOneName(userList,ele.user_id)
+          ele.createtime = moment(ele.createtime).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+        })
+        response.json(dto.set(todayList))
+      }).catch(err=>{
+        console.log(err)
       })
-      response.json(dto.set(todayList))
+      
     } else {
       /** 今日尚无人填写数据 */
       response.json(dto.set([]))
@@ -229,7 +230,7 @@ const DataService = function (app) {
 
   })
   /** 获取个人本月累计数据 */
-  const getTotalFild = (arr, user_id) => {
+  const getTotalFild =  (arr, user_id) => {
     let obj = {
       total_days_add: 0,
       total_days_look: 0,
@@ -238,7 +239,7 @@ const DataService = function (app) {
       total_days_im_consult: 0,
       total_days_im_private: 0
     };
-    console.log(arr)
+    // console.log(arr)
     arr.filter(e => e.user_id == user_id).forEach(ele => {
       obj.total_days_add += ele.day_add;
       obj.total_days_look += ele.day_look;
@@ -252,7 +253,7 @@ const DataService = function (app) {
   /** 获取某人姓名 */
   const getOneName=(arr,user_id)=>{
     if(!arr.length) return ''
-    const list=arr.filter(ele=>ele.user_id==user_id);
+    const list=arr.filter(ele=>ele.id==user_id);
     return list.length?list[0].name:''
   }
   /** 获取某人目标 */
@@ -266,28 +267,45 @@ const DataService = function (app) {
     return new Promise(resolve=>{
       let $sql = `SELECT * from linkdata WHERE to_days(createtime) = to_days(now())`
     _pool_connection_format($sql, [], res => {
-      // console.log(res)
       resolve(res ? res : [])
-      // return res ? res : []
     })
     })
     
   }
   /** 查询当月填写人员list数据 */
-  const getMonthList = ({}, response) => {
-    let params = [moment().format('YYYY-MM')]
-    let $sql = `SELECT * from linkdata WHERE month=?`
-    _pool_connection_format($sql, params, res => {
-      return res.length ? res : []
+  const getMonthList =  ({}, response) => {
+    return new Promise(resolve=>{
+      let params = [moment().format('YYYY-MM')]
+      let $sql = `SELECT * from linkdata WHERE DATE_FORMAT( createtime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )`
+      _pool_connection_format ($sql, params, res => {
+        resolve(res ? res : []) 
+      })
     })
+    
   }
   /** 获取用户列表 */
   const getUserList = () => {
-    let $sql = `SELECT * from user `
-    _pool_connection_format($sql, [], res => {
-      return res.length ? res: []
+    return new Promise(resolve=>{
+      let $sql = `SELECT * from user `
+      _pool_connection_format($sql, [], res => {
+        resolve(res ? res: []) 
+      })
     })
+    
   }
+  app.post(`/api/target/one`,(request,response)=>{
+    const {user_id}=request.body;
+    if(Utils.isEmpty(user_id)){
+      return response.json(DTO.PARAMS_ERR)
+    }
+    let params=[user_id,moment().format('YYYY-MM')]
+    let $sql=`select * from target where user_id=? AND month=?`;
+    _pool_connection_format($sql,params,res=>{
+      let dto=new DTO;
+      let obj=res.length?res[0]:{};
+      response.json(dto.set(obj).toJSON())
+    })
+  })
   /**
    * 本月目标编辑
    */
@@ -301,6 +319,7 @@ const DataService = function (app) {
       response.json(DTO.PARAMS_ERR);
       return;
     }
+    let dto=new DTO;
     let params = id ?
       [target, id, user_id] :
       [user_id, target, moment().format("YYYY-MM")];
@@ -337,12 +356,14 @@ const DataService = function (app) {
    * 获取所有人员本月目标
    */
   const getTotalTarget = ({}, response) => {
-    let params = [moment().format("YYYY-MM")];
-    let $sql = `SELECT * FROM target WHERE month=?`;
-    _pool_connection_format($sql, params, res => {
-      console.log(res+'334')
-      return res.length ? res : [];
-    });
+    return new Promise(resolve=>{
+      let params = [moment().format("YYYY-MM")];
+      let $sql = `SELECT * FROM target WHERE month=?`;
+      _pool_connection_format($sql, params, res => {
+        resolve(res ? res : []) 
+      });
+    })
+    
   };
 };
 module.exports = DataService;

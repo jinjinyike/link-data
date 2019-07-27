@@ -10,7 +10,7 @@ export default {
       antd: true,
       dva: true,
       dynamicImport: { webpackChunkName: true },
-      title: 'app1',
+      title: 'link_data_web',
       dll: true,
       
       routes: {

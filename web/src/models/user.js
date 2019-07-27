@@ -1,4 +1,4 @@
-import {getList,del,editUser,getUser} from '../services/user'
+import {getList,del,editUser,getUser,editTarget} from '../services/user'
 import { Toast } from 'antd-mobile';
 import router from 'umi/router'
 export default {
@@ -50,6 +50,15 @@ export default {
         })
       }
     },
+    *editTarget({payload},{call,put}){
+      const res=yield call(editTarget,payload);
+      if(res.code==0){
+        Toast.info('修改成功')
+        return new Promise(resolve=>{
+          resolve()
+        })
+      }
+    }
     
   },
   reducers:{

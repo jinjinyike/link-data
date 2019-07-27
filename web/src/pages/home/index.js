@@ -1,11 +1,12 @@
 import { TabBar } from 'antd-mobile';
 import React from 'react';
 import Today from './selfInfo';
-import Self from './self'
-import Group from './group'
-import homeSrc from '../../assets/home.png'
-import styles from './index.less'
-const Item=TabBar.Item
+import Self from './self';
+import Group from './group';
+import { connect } from 'react-redux';
+import homeSrc from '../../assets/home.png';
+import styles from './index.less';
+const Item = TabBar.Item;
 const arr = [
   {
     title: '今日数据',
@@ -13,7 +14,6 @@ const arr = [
     icon: 'https://gw.alipayobjects.com/zos/rmsportal/BTSsmHkPsQSPTktcXyTV.svg',
     selectedIcon: 'https://gw.alipayobjects.com/zos/rmsportal/ekLecvKBnRazVLXbWOnE.svg',
     CPM: <Today />,
-    hidden: false,
   },
   {
     title: '人员',
@@ -21,7 +21,6 @@ const arr = [
     icon: 'https://zos.alipayobjects.com/rmsportal/psUFoAMjkCcjqtUCNPxB.svg',
     selectedIcon: 'https://zos.alipayobjects.com/rmsportal/IIRLrXXrFAhXVdhMWgUI.svg',
     CPM: <Group />,
-    hidden: false,
   },
   {
     title: '个人中心',
@@ -29,7 +28,6 @@ const arr = [
     icon: 'https://zos.alipayobjects.com/rmsportal/asJMfBrNqpMMlVpeInPQ.svg',
     selectedIcon: 'https://zos.alipayobjects.com/rmsportal/gjpzzcrPMkhfEqgbYvmN.svg',
     CPM: <Self />,
-    hidden: false,
   },
 ];
 class Main extends React.Component {
@@ -42,10 +40,12 @@ class Main extends React.Component {
   }
 
   render() {
+    const { user } = this.props.app;
+    let list=user.admin?arr:arr.filter(ele=>ele.key!=='person')
     return (
-      <div style={{ position: 'fixed', height: '90%', width: '100%', top: 0 }}>
+      <div  className={styles.contant} >
         <div className={styles.demoHome}>
-          <img src={homeSrc} />
+          <img src={homeSrc} alt='首页'/>
           <span> | </span>
           <span>{this.state.selectedTab}</span>
         </div>
@@ -55,42 +55,43 @@ class Main extends React.Component {
           barTintColor="white"
           tabBarPosition="bottom"
         >
-          {arr.map(ele => {
-             return <Item
-              icon={
-                <div
-                  style={{
-                    width: '22px',
-                    height: '22px',
-                    background: `url(${ele.icon}) center center /  21px 21px no-repeat`,
-                  }}
-                />
-              }
-              selectedIcon={
-                <div
-                  style={{
-                    width: '22px',
-                    height: '22px',
-                    background: `url(${ele.selectedIcon}) center center /  21px 21px no-repeat`,
-                  }}
-                />
-              }
-              title={ele.title}
-              key={ele.key}
-              selected={this.state.selectedTab === ele.title}
-              // hidden={ele.hidden}
-              onPress={() => {
-                this.setState({
-                  selectedTab: ele.title,
-                });
-              }}
-            >
-              {ele.CPM}
-            </Item>;
+          {list.map(ele => {
+            return (
+              <Item
+                icon={
+                  <div
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      background: `url(${ele.icon}) center center /  21px 21px no-repeat`,
+                    }}
+                  />
+                }
+                selectedIcon={
+                  <div
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      background: `url(${ele.selectedIcon}) center center /  21px 21px no-repeat`,
+                    }}
+                  />
+                }
+                title={ele.title}
+                key={ele.key}
+                selected={this.state.selectedTab === ele.title}
+                onPress={() => {
+                  this.setState({
+                    selectedTab: ele.title,
+                  });
+                }}
+              >
+                {ele.CPM}
+              </Item>
+            );
           })}
         </TabBar>
       </div>
     );
   }
 }
-export default Main;
+export default connect(({ app }) => ({ app }))(Main);

@@ -1,13 +1,4 @@
 import request from '@/utils/request';
-// export async function query() {
-//   return request('/api/users');
-// }
-// export async function queryCurrent() {
-//   return request('/api/currentUser');
-// }
-// export async function queryNotices() {
-//   return request('/api/notices');
-// }
 export const addInfo = (obj) => request({
   url: '/day/modify',
   method: 'post',
@@ -47,4 +38,15 @@ export const editUser = (obj) => request({
   method: 'post',
   data:obj
 })
+export const editTarget = (obj) => request({
+  url: `/target/modify`,
+  method: 'post',
+  data:obj
+})
+export const getOneTarget = (obj) => request({
+  url: `/target/one`,
+  method: 'post',
+  data:obj
+})
+
 

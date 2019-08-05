@@ -17,7 +17,7 @@ const mysql = {
 };
 
 /** 日志根目录 */
-const LOGS_PATH = process.env.NODE_ENV === 'dev' ? path.resolve(__dirname + '/logs/') : "/home/linkhome/logs";
+const LOGS_PATH = process.env.NODE_ENV === 'dev' ? path.resolve(__dirname + '/logs/') : "/home/linkhome/logs/";
 
 /** 服务设置 */
 const SERVER = {

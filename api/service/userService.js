@@ -105,7 +105,7 @@ const ChatsService = function(app) {
     let $sql = "SELECT id, name, mobile FROM user WHERE id = ?";
     _pool_connection_format($sql, params, res => {
       if (res !== false) {
-        const dto = new DTO();
+        let dto = new DTO();
         dto.set(res[0]);
         response.json(dto.toJSON());
       } else {

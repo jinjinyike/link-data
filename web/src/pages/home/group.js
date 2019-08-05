@@ -23,7 +23,6 @@ class Main extends React.Component {
   render() {
     let { list } = this.props.user;
     list = list.filter(ele => ele.mobile !== '18222958232');
-    list =[]
     return (
       <WingBlank size="lg">
         <WhiteSpace size="lg" />

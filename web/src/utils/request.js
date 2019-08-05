@@ -3,8 +3,8 @@ import cloneDeep from 'lodash.clonedeep'
 // import router from 'umi/router';
 import { Toast } from 'antd-mobile';
 
-// const prifix = '/api';
-const prifix = 'http://47.104.202.11:9000/api';
+const prifix = '/api';
+// const prifix = 'http://47.104.202.11:9000/api';
 
 const fetch = (options) => {
     let {

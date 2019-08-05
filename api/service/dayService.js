@@ -122,7 +122,7 @@ const DataService = function (app) {
           obj.updatetime = obj.updatetime ?
             moment(obj.updatetime).format("YYYY-MM-DD HH:mm:ss") :
             null;
-          const dto = new DTO();
+          let dto = new DTO();
           dto.set(obj);
           response.json(dto.toJSON());
         } else {
